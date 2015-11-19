@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<project name="cvaldex-scrobbler" default="compile">
+	<!--
+	En caso que ant no encuentre el compilador, ejecutar: export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
+	Si no es la ruta correcta al JDK, ejecutar "locate javac" y copiar la ruta correcta
+	-->	
+	
+	<property file="build.properties"/>
+	
+	<!-- Propiedades proyecto generico -->
+	<property name="src" location="src"/>
+	<property name="classes" location="classes"/>
+	<property name="lib" location="lib"/>
+	<property name="lastfm-lib-path" location="/last.fm-bindings-7.3/last.fm-bindings.jar"/>
+
+	<!-- Propiedades librería -->
+	<property name="lib.src" location="${lib}/last.fm-bindings-7.3/src"/>
+	<property name="lib.classes" location="${lib}/last.fm-bindings-7.3/classes"/>
+	<property name="lib.jar.name" location="last.fm-bindings.jar"/>
+	
+	<target name="all" depends="compile, exec" description="compila y ejecuta el proyecto">
+	</target>
+	
+	<target name="compile" depends="clean" description="compila el proyecto">
+		<mkdir dir="${classes}"/>		
+		<javac
+			srcdir="${src}"
+			destdir="${classes}"
+			debug="true"
+			>
+			
+			<classpath>
+				<pathelement location="${lib}/${lastfm-lib-path}"/>
+			</classpath>		
+		</javac>
+	</target>
+
+	<target name="exec" description="ejecutar el proyecto" >	
+		<java 			
+			classname="Main">
+			<arg value="C:/iTunesDB"/> 	<!-- Alt. F:/iPod_Control/iTunes/iTunesDB Archivo donde está el listado de tracks a cargar -->
+			<arg value="cvaldex"/> 		<!-- Usuario last.fm -->
+			<arg value="maiden0"/> 		<!-- Password last.fm -->
+			<arg value="true"/> 		<!-- true si se deben enviar los scrobbligs o false si solo se quiere revisar la BD-->
+			<arg value="1000"/>     		<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
+			<arg value="50"/>       	<!-- Cada cuantos envíos escribir log -->
+			<arg value="0"/>       		<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
+			<arg value="true"/> 		<!-- ¿Enviar los tracks al azar? -->
+			<arg value="50"/> 			<!-- ¿Cuantos tracks debo enviar al azar?-->
+			
+			<classpath>
+				<pathelement location="${lib}/${lastfm-lib-path}"/>
+				<pathelement path="${classes}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="execCSV" description="ejecutar el proyecto" >	
+			<java 			
+				classname="MainCSVFile">
+				<arg value="${filepath}"/>	<!-- Archivo donde está el listado de tracks a cargar -->
+				<arg value="${lastfm.username}"/>	<!-- Usuario last.fm -->
+				<arg value="${lastfm.password}"/>	<!-- Password last.fm -->
+				<arg value="${sendScrobbles}"/>		<!-- true si se deben enviar los scrobbligs o false si solo se quiere revisar la BD-->
+				<arg value="${waitTime}"/>			<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
+				<arg value="${numberOfScrobblesBeforeLog}"/>	<!-- Cada cuantos envíos escribir log -->
+				<arg value="${numberOfScrobblesWithoutSend}"/>	<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
+
+				<classpath>
+					<pathelement location="${lib}/${lastfm-lib-path}"/>
+					<pathelement path="${classes}"/>
+				</classpath>
+			</java>
+		</target>
+
+
+	<target name="clean" description="elimina el directorio de compilacion" >
+    	<delete dir="${classes}"/>
+  	</target>
+</project>
