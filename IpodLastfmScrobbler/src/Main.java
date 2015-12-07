@@ -11,7 +11,6 @@ import org.lastpod.parser.TrackItemParser;
 
 import cl.cvaldex.scrobbler.main.BasicScrobbler;
 
-
 public class Main {
 
 	/**
