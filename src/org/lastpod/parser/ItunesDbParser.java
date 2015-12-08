@@ -19,17 +19,16 @@
 package org.lastpod.parser;
 
 import org.lastpod.TrackItem;
-
 import org.lastpod.util.IoUtils;
+
+import de.umass.lastfm.scrobble.ScrobbleData;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.math.BigInteger;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -175,12 +174,12 @@ public class ItunesDbParser implements TrackItemParser {
      * @return Returns parsed track object.
      * @throws IOException  Thrown if errors occur.
      */
-    public TrackItem parsemhit(InputStream itunesistream)
+    public ScrobbleData parsemhit(InputStream itunesistream)
             throws IOException {
         byte[] dword = new byte[4];
-        TrackItem track = new TrackItem();
-        track.setParseVariousArtists(parseVariousArtists);
-        track.setVariousArtistsStrings(variousArtistsStrings);
+        ScrobbleData track = new ScrobbleData();
+        //track.setParseVariousArtists(parseVariousArtists);
+        //track.setVariousArtistsStrings(variousArtistsStrings);
 
         itunesistream.mark(1048576); //mark beginning of MHIT location
 
@@ -194,11 +193,12 @@ public class ItunesDbParser implements TrackItemParser {
         long nummhods = IoUtils.littleEndianToBigInt(dword).longValue();
 
         itunesistream.read(dword);
-        track.setTrackid(IoUtils.littleEndianToBigInt(dword).longValue());
+        //track.setStreamId((IoUtils.littleEndianToBigInt(dword).longValue());
 
         IoUtils.skipFully(itunesistream, 20);
         itunesistream.read(dword);
-        track.setLength(IoUtils.littleEndianToBigInt(dword).longValue() / 1000);
+        track.setTimestamp((int) (IoUtils.littleEndianToBigInt(dword).longValue() / 1000));
+        //track.setLength(IoUtils.littleEndianToBigInt(dword).longValue() / 1000);
         
         //***********************************
         
@@ -207,7 +207,7 @@ public class ItunesDbParser implements TrackItemParser {
         IoUtils.skipFully(itunesistream, 76); //la documentacin indica que debe ser 80, pero ese campo no es v�lido
         itunesistream.read(dword);
         long playcount = IoUtils.littleEndianToBigInt(dword).longValue();
-        track.setPlaycount(playcount);
+        track.setPlayCount((int) playcount);
         
         //setear la fecha de ultima reproduccion
         if(playcount > 0){
@@ -225,7 +225,7 @@ public class ItunesDbParser implements TrackItemParser {
         	//	System.out.println("Fecha válida: " + (new Date(timeLastPlayed)).toString());
         	//}
         	
-        	track.setLastplayed(timeLastPlayed);
+        	//track.setLastplayed(timeLastPlayed);
         }
         
         itunesistream.reset();
@@ -243,7 +243,7 @@ public class ItunesDbParser implements TrackItemParser {
      * @param itunesistream  A stream that reads the iTunes database file.
      * @throws IOException  Thrown if errors occur.
      */
-    public void parsemhod(TrackItem track, InputStream itunesistream)
+    public void parsemhod(ScrobbleData track, InputStream itunesistream)
             throws IOException {
         byte[] dword = new byte[4];
 
@@ -281,7 +281,7 @@ public class ItunesDbParser implements TrackItemParser {
                 break;
 
             case 2:
-                track.setLocation(stringdata);
+                //track.setLocation(stringdata);
 
                 break;
 

@@ -37,16 +37,21 @@
 
 	<target name="exec" description="ejecutar el proyecto" >	
 		<java 			
-			classname="Main">
-			<arg value="C:/iTunesDB"/> 	<!-- Alt. F:/iPod_Control/iTunes/iTunesDB Archivo donde está el listado de tracks a cargar -->
-			<arg value="cvaldex"/> 		<!-- Usuario last.fm -->
-			<arg value="maiden0"/> 		<!-- Password last.fm -->
-			<arg value="true"/> 		<!-- true si se deben enviar los scrobbligs o false si solo se quiere revisar la BD-->
-			<arg value="1000"/>     		<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
-			<arg value="50"/>       	<!-- Cada cuantos envíos escribir log -->
-			<arg value="0"/>       		<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
-			<arg value="true"/> 		<!-- ¿Enviar los tracks al azar? -->
-			<arg value="50"/> 			<!-- ¿Cuantos tracks debo enviar al azar?-->
+			classname="MainIpod">
+			<arg value="${filePathItunes}"/>		<!-- Archivo donde está el listado de tracks a cargar -->
+			<arg value="${lastfm.username}"/>	<!-- Usuario last.fm -->
+			<arg value="${lastfm.password}"/>	<!-- Password last.fm -->
+			<arg value="${sendScrobbles}"/>		<!-- true si se deben enviar los scrobbligs o false si solo se quiere revisar la BD-->
+			<arg value="${waitTime}"/>			<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
+			<arg value="${numberOfScrobblesBeforeLog}"/>	<!-- Cada cuantos envíos escribir log -->
+			<arg value="${numberOfScrobblesWithoutSend}"/>	<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
+			
+			<arg value="${sendRandomScrobles}"/> 			<!-- ¿Enviar los tracks al azar? -->
+			<arg value="${numberOfRandomScrobles}"/> 		<!-- ¿Cuantos tracks debo enviar al azar?-->
+			
+			<arg value="${useProxy}"/>			<!-- Indica si se debe usar proxy para la salida -->
+			<arg value="${proxy.host}"/>		<!-- Host del proxy -->
+			<arg value="${proxy.port}"/>		<!-- Puerto del proxy -->
 			
 			<classpath>
 				<pathelement location="${lib}/${lastfm-lib-path}"/>
@@ -58,14 +63,19 @@
 	<target name="execCSV" description="ejecutar el proyecto" >	
 			<java 			
 				classname="MainCSVFile">
-				<arg value="${filepath}"/>	<!-- Archivo donde está el listado de tracks a cargar -->
+				<arg value="${filePathCSV}"/>		<!-- Archivo donde está el listado de tracks a cargar -->
 				<arg value="${lastfm.username}"/>	<!-- Usuario last.fm -->
 				<arg value="${lastfm.password}"/>	<!-- Password last.fm -->
 				<arg value="${sendScrobbles}"/>		<!-- true si se deben enviar los scrobbligs o false si solo se quiere revisar la BD-->
 				<arg value="${waitTime}"/>			<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
 				<arg value="${numberOfScrobblesBeforeLog}"/>	<!-- Cada cuantos envíos escribir log -->
 				<arg value="${numberOfScrobblesWithoutSend}"/>	<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
+				
+				<arg value="${useProxy}"/>			<!-- Indica si se debe usar proxy para la salida -->
+				<arg value="${proxy.host}"/>		<!-- Host del proxy -->
+				<arg value="${proxy.port}"/>		<!-- Puerto del proxy -->
 
+				
 				<classpath>
 					<pathelement location="${lib}/${lastfm-lib-path}"/>
 					<pathelement path="${classes}"/>

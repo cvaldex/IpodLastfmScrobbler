@@ -7,10 +7,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lastpod.TrackItem;
+
+//import org.lastpod.TrackItem;
+import de.umass.lastfm.scrobble.ScrobbleData;
 
 public class CSVParser {
-	public static List<TrackItem> fileParser(String absoluteFilePath) throws Exception{
+	public static final int DEFAULT_DURATION = 4000;
+	public static List<ScrobbleData> fileParser(String absoluteFilePath) throws Exception{
 		File file = new File(absoluteFilePath);
 		
 		if(!file.exists() || !file.canRead()){
@@ -20,7 +23,7 @@ public class CSVParser {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
 		
 		String line = null;
-		List<TrackItem> trackList = new ArrayList<TrackItem>();
+		List<ScrobbleData> trackList = new ArrayList<ScrobbleData>();
 		int currentLine = 1;
 		
 		while((line = reader.readLine()) != null){
@@ -42,24 +45,22 @@ public class CSVParser {
 		return trackList;
 	}
 	
-	private static TrackItem parseLine(String line) throws Exception{
-		TrackItem trackItem = new TrackItem();
+	private static ScrobbleData parseLine(String line) throws Exception{
+		
 		
 		String [] fields = line.split("\t");
 		if(fields.length < 4){
 			throw new Exception("Campos mínimos para scrobbling son Artista, Album, Nombre Track, Largo y Playcount");
 		}
+
+		ScrobbleData scrobble = new ScrobbleData();
 		
-		trackItem.setArtist(fields[0]);
-		trackItem.setAlbum(fields[1]);
-		trackItem.setTrack(fields[2]);
-		trackItem.setPlaycount(Long.parseLong(fields[3]));
-		
-		//Valores por defecto
-		trackItem.setTrackid(0);
-		trackItem.setLastplayed(System.currentTimeMillis());
-		trackItem.setLength(4000);
-		
-		return trackItem;
+		scrobble.setArtist(fields[0]);
+		scrobble.setAlbum(fields[1]);
+		scrobble.setTrack(fields[2]);
+		scrobble.setPlayCount(Integer.parseInt(fields[3]));
+		scrobble.setDuration(DEFAULT_DURATION);
+
+		return scrobble;
 	}
 }

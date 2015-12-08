@@ -5,30 +5,25 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
-import net.roarsoftware.lastfm.scrobble.ResponseStatus;
-import net.roarsoftware.lastfm.scrobble.Scrobbler;
+import de.umass.lastfm.Authenticator;
+import de.umass.lastfm.Session;
+import de.umass.lastfm.Track;
+import de.umass.lastfm.scrobble.ScrobbleData;
+import de.umass.lastfm.scrobble.ScrobbleResult;
 
-import org.lastpod.TrackItem;
+//import net.roarsoftware.lastfm.scrobble.ResponseStatus;
+//import net.roarsoftware.lastfm.scrobble.Scrobbler;
+
+//import org.lastpod.TrackItem;
 
 public class BasicScrobbler {
-	public static final String KEY = "159b8689e2323359d9db3bd544da7210"; //clave generada por last.fm
+	public static final String API_KEY = "159b8689e2323359d9db3bd544da7210"; //clave generada por last.fm
 	public static final String SECRET = "0e94bbfb5b25497a2a4955248bb85fbe"; // valor secreto generado por last.fm
-	public static final long TIME_DELAY = 117;
 
-//	public static void main(String[] args) throws Exception{
-	public static void scrobble(Collection<TrackItem> tracks , String userName , String userPassword , long delay , int scrobblingLogAmount , int voidScrobbles) throws IOException, InterruptedException{
-		Scrobbler scrobbler = Scrobbler.newScrobbler("tst", "1.0", userName);
-		ResponseStatus status = scrobbler.handshake(userPassword);
+	public static void scrobble(Collection<ScrobbleData> tracks , String userName , String userPassword , long delay , int scrobblingLogAmount , int voidScrobbles) throws IOException, InterruptedException{
+		Session session = Authenticator.getMobileSession(userName, userPassword, API_KEY, SECRET);
 		
-		if(status.ok()){
-			System.out.println("Sesión establecida correctamente con usuario: " + userName);
-		}
-		else{
-			System.out.println("Error al establecer la sesión.-");
-			System.exit(1);
-		}
-		
-		long playCount = 0;
+		long playCount = 1;
 		int totalScrobblings = 0;
 		long startTime = 0;
 		
@@ -37,25 +32,27 @@ public class BasicScrobbler {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		System.out.println("Inicio proceso: " + formatter.format(new Date()) + " - Delay envio: " + delay);
-		
+		ScrobbleResult result = null;
 		//int floorCounter = 329;
+		int numberOfTracks = tracks.size();
+		long timeStamp = System.currentTimeMillis() / 1000;
 		
-		for (TrackItem data : tracks) {
-			playCount = data.getPlaycount();
-			
+		
+		for (ScrobbleData data : tracks) {
+			playCount = data.getPlayCount();
+			//playCount = 1; /**TO-DO Corregir esta aberración **/
 			//procesar cada track con la cantidad de veces que fue reproducido
+			/**TO-DO corregir esto del playcount **/
 			while(playCount > 0){
-				//setear el startTime "fresco"
-				startTime = (System.currentTimeMillis() / 1000) - TIME_DELAY;
-
-				data.setStartTime(startTime);
-				
 				if(voidScrobbles < totalScrobblings || voidScrobbles == 0){
-					status = scrobbler.submit(data);
+					startTime = timeStamp - (numberOfTracks * 10);
+					numberOfTracks --;
+					data.setTimestamp((int)startTime);
+					result = Track.scrobble(data , session);
 				}
 				
-				if(!status.ok()){
-					System.out.println("Error: " + status.getMessage() + " " + "\n" + data.toString());
+				if(!result.isSuccessful()){
+					System.out.println("Error: " + result.getErrorMessage() + " " + "\n" + data.toString());
 				}
 				
 				playCount--;
@@ -75,5 +72,4 @@ public class BasicScrobbler {
 		System.out.println("Fin proceso: " + formatter.format(new Date()));
 		System.out.println("Scrobblings totales = " + totalScrobblings + "\t Promedio por Scrobbling: " + averageTimeScrobbling);
 	}
-
 }

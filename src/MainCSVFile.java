@@ -2,9 +2,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.lastpod.TrackItem;
 import cl.cvaldex.scrobbler.main.BasicScrobbler;
 import cl.cvaldex.scrobbler.parser.CSVParser;
+import de.umass.lastfm.scrobble.ScrobbleData;
 
 public class MainCSVFile {
 
@@ -20,11 +20,11 @@ public class MainCSVFile {
 	 */
 
 	public static void main(String[] args) throws Exception {
-		if(args.length < 6){
-			System.out.println("Error en la ejecución: MainCVSFile filePath user password sendDelay sendLog voidScrobbles");
+		if(args.length < 7){
+			System.out.println("Error en la ejecución: MainCVSFile filePath user password sendDelay sendLog voidScrobbles useProxy");
 			System.exit(1);
 		}
-		
+		System.out.println("--->");
 		String filePath = args[0];
 		String lastfmUser = args[1];
 		String lastfmPassword = args[2];
@@ -32,15 +32,35 @@ public class MainCSVFile {
 		long delay = Long.parseLong(args[4]);
 		int scrobblingLogAmount = Integer.parseInt(args[5]);
 		int voidScrobbles = Integer.parseInt(args[6]);
+		
+		boolean useProxy = Boolean.valueOf(args[7]);
+		
+		if(useProxy){
+			if(args.length < 9){
+				System.out.println("Error en la ejecución: Faltan proxy.host y proxy.port");
+				System.exit(1);
+			}
+			String proxyHost = args[8];
+			String proxyPort = args[9];
+			
+			System.out.println("Proxy Host: " + proxyHost);
+			System.out.println("Proxy Port: " + proxyPort);
+			
+			//setear proxy
+			System.setProperty("http.proxyHost", proxyHost);
+	        System.setProperty("http.proxyPort", proxyPort);
+	        System.setProperty("https.proxyHost", proxyHost);
+	        System.setProperty("https.proxyPort", proxyPort);
+		}
 
 		System.out.println("File path: " + filePath);
 		System.out.println("Lastfm user: " + lastfmUser);
 		System.out.println("Scrobbling delay: " + delay);
 		System.out.println("Scrobbling log amount: " + scrobblingLogAmount);
 		System.out.println("Scrobbling to void: " + voidScrobbles);
+		System.out.println("Use Proxy: " + useProxy);
 		
-		//TrackItemParser tip = new ItunesDbParser(filePath , false , null , false);
-		List<TrackItem> tracks = (List<TrackItem>) CSVParser.fileParser(filePath);
+		List<ScrobbleData> tracks = (List<ScrobbleData>) CSVParser.fileParser(filePath);
 		
 		printScrobbles(tracks);
 		
@@ -52,26 +72,23 @@ public class MainCSVFile {
 		}
 	}
 	
-	static int countScrobbles(List<TrackItem> tracks){
+	static int countScrobbles(List<ScrobbleData> tracks){
 		int counter = 0;
 		
-		for(TrackItem track: tracks){
-			counter += track.getPlaycount();
+		for(ScrobbleData track: tracks){
+			counter += track.getPlayCount();
 		}
-		
+
 		return counter;
 	}
 	
-	static int printScrobbles(List<TrackItem> tracks){
-		int counter = 0;
-		
-		for(TrackItem track: tracks){
-			if(track.getPlaycount() > 0){
-				System.out.println(track.getArtist() + " - " + track.getAlbum() + " - " + track.getTrack() + " - " + track.getPlaycount() + " - " + formatDate(new Date(track.getLastplayed() * 1000)));
+	static void printScrobbles(List<ScrobbleData> tracks){
+		for(ScrobbleData track: tracks){
+			if(track.getPlayCount() > 0){
+				System.out.println(track.getArtist() + " - " + track.getAlbum() + " - " + track.getTrack() + " - " + formatDate(new Date(track.getTimestamp() * 1000)));
 			}
 		}
 		
-		return counter;
 	}
 	
 	static String formatDate(Date date){
