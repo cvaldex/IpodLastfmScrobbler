@@ -3,10 +3,10 @@
 	<!--
 	En caso que ant no encuentre el compilador, ejecutar: export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
 	Si no es la ruta correcta al JDK, ejecutar "locate javac" y copiar la ruta correcta
-	-->	
-	
+	-->
+
 	<property file="build.properties"/>
-	
+
 	<!-- Propiedades proyecto generico -->
 	<property name="src" location="src"/>
 	<property name="classes" location="classes"/>
@@ -17,27 +17,30 @@
 	<property name="lib.src" location="${lib}/last.fm-bindings-7.3/src"/>
 	<property name="lib.classes" location="${lib}/last.fm-bindings-7.3/classes"/>
 	<property name="lib.jar.name" location="last.fm-bindings.jar"/>
-	
-	<target name="all" depends="compile, exec" description="compila y ejecuta el proyecto">
+
+	<target name="all" depends="compile, ipodDB" description="compila y ejecuta el proyecto">
 	</target>
-	
+
 	<target name="compile" depends="clean" description="compila el proyecto">
-		<mkdir dir="${classes}"/>		
+		<mkdir dir="${classes}"/>
 		<javac
 			srcdir="${src}"
 			destdir="${classes}"
 			debug="true"
 			>
-			
+
 			<classpath>
 				<pathelement location="${lib}/${lastfm-lib-path}"/>
-			</classpath>		
+			</classpath>
 		</javac>
+		<copy file="${src}/log4j.properties" tofile="${classes}/log4j.properties"/>
 	</target>
 
-	<target name="exec" description="ejecutar el proyecto" >	
-		<java 			
+	<target name="ipodDB" description="ejecutar el proyecto" >
+		<java
 			classname="MainIpod">
+			<!--sysproperty key="log4j.configuration" value="file:${classes}/log4j.properties"/-->
+
 			<arg value="${filePathItunes}"/>		<!-- Archivo donde está el listado de tracks a cargar -->
 			<arg value="${lastfm.username}"/>	<!-- Usuario last.fm -->
 			<arg value="${lastfm.password}"/>	<!-- Password last.fm -->
@@ -45,23 +48,23 @@
 			<arg value="${waitTime}"/>			<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
 			<arg value="${numberOfScrobblesBeforeLog}"/>	<!-- Cada cuantos envíos escribir log -->
 			<arg value="${numberOfScrobblesWithoutSend}"/>	<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
-			
+
 			<arg value="${sendRandomScrobles}"/> 			<!-- ¿Enviar los tracks al azar? -->
 			<arg value="${numberOfRandomScrobles}"/> 		<!-- ¿Cuantos tracks debo enviar al azar?-->
-			
+
 			<arg value="${useProxy}"/>			<!-- Indica si se debe usar proxy para la salida -->
 			<arg value="${proxy.host}"/>		<!-- Host del proxy -->
 			<arg value="${proxy.port}"/>		<!-- Puerto del proxy -->
-			
+
 			<classpath>
 				<pathelement location="${lib}/${lastfm-lib-path}"/>
 				<pathelement path="${classes}"/>
 			</classpath>
 		</java>
 	</target>
-	
-	<target name="execCSV" description="ejecutar el proyecto" >	
-			<java 			
+
+	<target name="csv" description="ejecutar el proyecto" >
+			<java
 				classname="MainCSVFile">
 				<arg value="${filePathCSV}"/>		<!-- Archivo donde está el listado de tracks a cargar -->
 				<arg value="${lastfm.username}"/>	<!-- Usuario last.fm -->
@@ -70,12 +73,12 @@
 				<arg value="${waitTime}"/>			<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
 				<arg value="${numberOfScrobblesBeforeLog}"/>	<!-- Cada cuantos envíos escribir log -->
 				<arg value="${numberOfScrobblesWithoutSend}"/>	<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
-				
+
 				<arg value="${useProxy}"/>			<!-- Indica si se debe usar proxy para la salida -->
 				<arg value="${proxy.host}"/>		<!-- Host del proxy -->
 				<arg value="${proxy.port}"/>		<!-- Puerto del proxy -->
 
-				
+
 				<classpath>
 					<pathelement location="${lib}/${lastfm-lib-path}"/>
 					<pathelement path="${classes}"/>
