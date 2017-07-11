@@ -6,8 +6,11 @@ import cl.cvaldex.scrobbler.main.BasicScrobbler;
 import cl.cvaldex.scrobbler.parser.CSVParser;
 import de.umass.lastfm.scrobble.ScrobbleData;
 
-public class MainCSVFile {
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
+public class MainCSVFile {
+	//private final Logger log = LogManager.getLogger(this.getClass().getName());
 	/**
 	 * @param args
 	 * 0 = ruta del archivo a leer, en formato CSV
@@ -20,11 +23,12 @@ public class MainCSVFile {
 	 */
 
 	public static void main(String[] args) throws Exception {
+		Logger log = LogManager.getLogger(MainCSVFile.class.getName());
 		if(args.length < 7){
-			System.out.println("Error en la ejecución: MainCVSFile filePath user password sendDelay sendLog voidScrobbles useProxy");
+			log.error("Error en la ejecución: MainCVSFile filePath user password sendDelay sendLog voidScrobbles useProxy");
 			System.exit(1);
 		}
-		System.out.println("--->");
+
 		String filePath = args[0];
 		String lastfmUser = args[1];
 		String lastfmPassword = args[2];
@@ -37,14 +41,14 @@ public class MainCSVFile {
 		
 		if(useProxy){
 			if(args.length < 9){
-				System.out.println("Error en la ejecución: Faltan proxy.host y proxy.port");
+				log.error("Error en la ejecución: Faltan proxy.host y proxy.port");
 				System.exit(1);
 			}
 			String proxyHost = args[8];
 			String proxyPort = args[9];
 			
-			System.out.println("Proxy Host: " + proxyHost);
-			System.out.println("Proxy Port: " + proxyPort);
+			log.debug("Proxy Host: " + proxyHost);
+			log.debug("Proxy Port: " + proxyPort);
 			
 			//setear proxy
 			System.setProperty("http.proxyHost", proxyHost);
@@ -53,12 +57,14 @@ public class MainCSVFile {
 	        System.setProperty("https.proxyPort", proxyPort);
 		}
 
-		System.out.println("File path: " + filePath);
-		System.out.println("Lastfm user: " + lastfmUser);
-		System.out.println("Scrobbling delay: " + delay);
-		System.out.println("Scrobbling log amount: " + scrobblingLogAmount);
-		System.out.println("Scrobbling to void: " + voidScrobbles);
-		System.out.println("Use Proxy: " + useProxy);
+		System.out.println("Iniciando el proceso");
+		
+		log.debug("File path: " + filePath);
+		log.debug("Lastfm user: " + lastfmUser);
+		log.debug("Scrobbling delay: " + delay);
+		log.debug("Scrobbling log amount: " + scrobblingLogAmount);
+		log.debug("Scrobbling to void: " + voidScrobbles);
+		log.debug("Use Proxy: " + useProxy);
 		
 		List<ScrobbleData> tracks = (List<ScrobbleData>) CSVParser.fileParser(filePath);
 		
@@ -92,20 +98,7 @@ public class MainCSVFile {
 	}
 	
 	static String formatDate(Date date){
-		/*int counter = 0;
-		
-		for(TrackItem track: tracks){
-			if(track.getPlaycount() > 0){
-				System.out.println(track.getArtist() + " - " + track.getAlbum() + " - " + track.getTrack() + " - " + track.getPlaycount() + " - " + new Date(track.getLastplayed() * 1000));
-			}
-		}
-		
-		return counter;
-		*/
-		//String formatedDate = null;
-		
 		DateFormat df =  DateFormat.getDateInstance(DateFormat.FULL);
-		
 		
 		return df.format(date);
 	}

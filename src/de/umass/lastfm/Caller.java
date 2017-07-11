@@ -35,8 +35,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.umass.lastfm.Result.Status;
 import de.umass.lastfm.cache.Cache;
@@ -62,10 +62,10 @@ public class Caller {
 	private static final String PARAM_API_KEY = "api_key";
 	private static final String PARAM_METHOD = "method";
 
-	private static final String DEFAULT_API_ROOT = "http://ws.audioscrobbler.com/2.0/";
+	private static final String DEFAULT_API_ROOT = "https://ws.audioscrobbler.com/2.0/";
 	private static final Caller instance = new Caller();
 	
-	private final Logger log = Logger.getLogger("de.umass.lastfm.Caller");
+	private final Logger log = LogManager.getLogger("de.umass.lastfm.Caller");
 	
 	private String apiRootUrl = DEFAULT_API_ROOT;
 
@@ -153,10 +153,11 @@ public class Caller {
 	 * @param debugMode <code>true</code> to enable debug mode   
 	 * @deprecated Use the Logger instead
 	 */
-	public void setDebugMode(boolean debugMode) {
+	/*public void setDebugMode(boolean debugMode) {
 		this.debugMode = debugMode;
 		log.setLevel(debugMode ? Level.ALL : Level.OFF);
-	}
+		log.s
+	}*/
 
 	/**
 	 * @see de.umass.lastfm.Caller#getLogger()
@@ -255,7 +256,7 @@ public class Caller {
 		try {
 			Result result = createResultFromInputStream(inputStream);
 			if (!result.isSuccessful()) {
-				log.warning(String.format("API call failed with result: %s%n", result));
+				log.warn(String.format("API call failed with result: %s%n", result));
 				if (cache != null) {
 					cache.remove(cacheEntryName);
 				}

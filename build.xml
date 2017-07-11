@@ -31,13 +31,15 @@
 
 			<classpath>
 				<pathelement location="${lib}/${lastfm-lib-path}"/>
+				<pathelement path="${lib}/log4j-api-2.7.jar"/>
+				<pathelement path="${lib}/log4j-core-2.7.jar"/>
 			</classpath>
 		</javac>
-		<copy file="${src}/log4j.properties" tofile="${classes}/log4j.properties"/>
+		<copy file="${src}/log4j2.properties" tofile="${classes}/log4j2.properties"/>
 	</target>
 
 	<target name="ipodDB" description="ejecutar el proyecto" >
-		<java
+		<java fork="true"
 			classname="MainIpod">
 			<!--sysproperty key="log4j.configuration" value="file:${classes}/log4j.properties"/-->
 
@@ -57,6 +59,8 @@
 			<arg value="${proxy.port}"/>		<!-- Puerto del proxy -->
 
 			<classpath>
+				<pathelement path="${lib}/log4j-api-2.7.jar"/>
+				<pathelement path="${lib}/log4j-core-2.7.jar"/>
 				<pathelement location="${lib}/${lastfm-lib-path}"/>
 				<pathelement path="${classes}"/>
 			</classpath>
@@ -64,7 +68,7 @@
 	</target>
 
 	<target name="csv" description="ejecutar el proyecto" >
-			<java
+			<java fork="true"
 				classname="MainCSVFile">
 				<arg value="${filePathCSV}"/>		<!-- Archivo donde está el listado de tracks a cargar -->
 				<arg value="${lastfm.username}"/>	<!-- Usuario last.fm -->
@@ -80,10 +84,14 @@
 
 
 				<classpath>
+					<pathelement path="${lib}/log4j-api-2.7.jar"/>
+					<pathelement path="${lib}/log4j-core-2.7.jar"/>
 					<pathelement location="${lib}/${lastfm-lib-path}"/>
 					<pathelement path="${classes}"/>
+
 				</classpath>
 			</java>
+
 		</target>
 
 
