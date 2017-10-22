@@ -33,6 +33,19 @@
 				<pathelement location="${lib}/${lastfm-lib-path}"/>
 				<pathelement path="${lib}/log4j-api-2.7.jar"/>
 				<pathelement path="${lib}/log4j-core-2.7.jar"/>
+				<pathelement path="${lib}/google-api-client-1.23.0.jar"/>
+				<pathelement path="${lib}/google-api-services-sheets-v4-rev487-1.23.0.jar"/>
+				<pathelement path="${lib}/google-http-client-1.23.0.jar"/>
+				<pathelement path="${lib}/google-http-client-jackson2-1.23.0.jar"/>
+				<pathelement path="${lib}/google-oauth-client-1.23.0.jar"/>
+				<pathelement path="${lib}/google-oauth-client-java6-1.23.0.jar"/>
+				<pathelement path="${lib}/google-oauth-client-jetty-1.23.0.jar"/>
+				<pathelement path="${lib}/httpclient-4.0.1.jar"/>
+				<pathelement path="${lib}/httpcore-4.0.1.jar"/>
+				<pathelement path="${lib}/jackson-core-2.1.3.jar"/>
+				<pathelement path="${lib}/javax.servlet-api-3.1.0.jar"/>
+				<pathelement path="${lib}/jetty-6.1.26.jar"/>
+				<pathelement path="${lib}/jetty-util-6.1.26.jar"/>
 			</classpath>
 		</javac>
 		<copy file="${src}/log4j2.properties" tofile="${classes}/log4j2.properties"/>
@@ -93,6 +106,49 @@
 			</java>
 
 		</target>
+	
+	<target name="gss" description="ejecutar el proyecto" >
+				<java fork="true"
+					classname="MainGoogleSpreadSheet">
+					<arg value="${spreadSheet.id}"/>		<!-- ID Hoja de Calculo -->
+					<arg value="${lastfm.username}"/>	<!-- Usuario last.fm -->
+					<arg value="${lastfm.password}"/>	<!-- Password last.fm -->
+					<arg value="${sendScrobbles}"/>		<!-- true si se deben enviar los scrobbligs o false si solo se quiere revisar la BD-->
+					<arg value="${waitTime}"/>			<!-- Cantidad de milisegundos a esperar despues de cada peticion -->
+					<arg value="${numberOfScrobblesBeforeLog}"/>	<!-- Cada cuantos envíos escribir log -->
+					<arg value="${numberOfScrobblesWithoutSend}"/>	<!-- Cuantos tracks saltarse antes de comenzar a enviar data -->
+
+					<arg value="${useProxy}"/>			<!-- Indica si se debe usar proxy para la salida -->
+					<arg value="${proxy.host}"/>		<!-- Host del proxy -->
+					<arg value="${proxy.port}"/>		<!-- Puerto del proxy -->
+					
+					<arg value="${spreadSheet.secretsFilePath}"/>		<!-- Puerto del proxy -->
+					<arg value="${spreadSheet.range}"/>		<!-- Puerto del proxy -->
+					
+					
+					<classpath>
+						<pathelement path="${lib}/log4j-api-2.7.jar"/>
+						<pathelement path="${lib}/log4j-core-2.7.jar"/>
+						<pathelement path="${lib}/google-api-client-1.23.0.jar"/>
+						<pathelement path="${lib}/google-api-services-sheets-v4-rev487-1.23.0.jar"/>
+						<pathelement path="${lib}/google-http-client-1.23.0.jar"/>
+						<pathelement path="${lib}/google-http-client-jackson2-1.23.0.jar"/>
+						<pathelement path="${lib}/google-oauth-client-1.23.0.jar"/>
+						<pathelement path="${lib}/google-oauth-client-java6-1.23.0.jar"/>
+						<pathelement path="${lib}/google-oauth-client-jetty-1.23.0.jar"/>
+						<pathelement path="${lib}/httpclient-4.0.1.jar"/>
+						<pathelement path="${lib}/httpcore-4.0.1.jar"/>
+						<pathelement path="${lib}/jackson-core-2.1.3.jar"/>
+						<pathelement path="${lib}/javax.servlet-api-3.1.0.jar"/>
+						<pathelement path="${lib}/jetty-6.1.26.jar"/>
+						<pathelement path="${lib}/jetty-util-6.1.26.jar"/>
+						<pathelement location="${lib}/${lastfm-lib-path}"/>
+						<pathelement path="${classes}"/>
+
+					</classpath>
+				</java>
+
+			</target>
 
 
 	<target name="clean" description="elimina el directorio de compilacion" >
