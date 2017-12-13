@@ -54,6 +54,7 @@ public class GoogleSheetsParser{
     private String spreadsheetId = null;
     private String range = null;
     public static final int DEFAULT_DURATION = 4000;
+    public static final int DEFAULT_SCROBBLE_COUNTER = 1;
 
     static {
         try {
@@ -136,7 +137,13 @@ public class GoogleSheetsParser{
 	        		scrobble.setArtist(row.get(1).toString());
 	        		scrobble.setAlbum(row.get(2).toString());
 	        		scrobble.setTrack(row.get(3).toString());
-	        		scrobble.setPlayCount(Integer.parseInt(row.get(4).toString()));
+	        		
+	        		try{
+	        			scrobble.setPlayCount(Integer.parseInt(row.get(4).toString()));
+	        		}
+	        		catch(java.lang.IndexOutOfBoundsException e){
+	        			scrobble.setPlayCount(DEFAULT_SCROBBLE_COUNTER);
+	        		}
 	        		scrobble.setDuration(DEFAULT_DURATION);
 	        		
 	        		trackList.add(scrobble);
