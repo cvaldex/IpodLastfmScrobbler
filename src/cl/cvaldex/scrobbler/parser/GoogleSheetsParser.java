@@ -155,8 +155,6 @@ public class GoogleSheetsParser{
 	        			scrobble.setTimestamp((int)(System.currentTimeMillis() / 1000));
 	        		}
 
-              System.out.println("scrobble.getTimestamp: " + scrobble.getTimestamp());
-
 	        		scrobble.setDuration(DEFAULT_DURATION);
 
 	        		trackList.add(scrobble);
