@@ -49,7 +49,7 @@ public class GoogleSheetsParser{
      * at ~/.credentials/sheets.googleapis.com-java-quickstart
      */
     private static final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS_READONLY);
-    
+
     private static String secretsFilePath = null;
     private String spreadsheetId = null;
     private String range = null;
@@ -108,15 +108,15 @@ public class GoogleSheetsParser{
     	if(secretsFilePath == null || secretsFilePath.trim().length() == 0){
     		throw new Exception("secretsFilePath cannot be null or empty");
     	}
-    	
+
     	if(spreadsheetId == null || spreadsheetId.trim().length() == 0){
     		throw new Exception("spreadsheetId cannot be null or empty");
     	}
-    	
+
     	if(range == null || range.trim().length() == 0){
     		throw new Exception("Cell range cannot be null or empty");
     	}
-    	
+
     	Collection<ScrobbleData> trackList = new ArrayList<ScrobbleData>();
         // Build a new authorized API client service.
         Sheets service = getSheetsService();
@@ -137,20 +137,33 @@ public class GoogleSheetsParser{
 	        		scrobble.setArtist(row.get(1).toString());
 	        		scrobble.setAlbum(row.get(2).toString());
 	        		scrobble.setTrack(row.get(3).toString());
-	        		
+
 	        		try{
 	        			scrobble.setPlayCount(Integer.parseInt(row.get(4).toString()));
 	        		}
-	        		catch(java.lang.IndexOutOfBoundsException e){
+	        		catch(java.lang.IndexOutOfBoundsException ioobe){
 	        			scrobble.setPlayCount(DEFAULT_SCROBBLE_COUNTER);
 	        		}
+              catch(java.lang.NumberFormatException nfe){
+	        			scrobble.setPlayCount(DEFAULT_SCROBBLE_COUNTER);
+	        		}
+
+              try{
+	        			scrobble.setTimestamp(Integer.parseInt(row.get(5).toString()));
+	        		}
+	        		catch(java.lang.IndexOutOfBoundsException e){
+	        			scrobble.setTimestamp((int)(System.currentTimeMillis() / 1000));
+	        		}
+
+              System.out.println("scrobble.getTimestamp: " + scrobble.getTimestamp());
+
 	        		scrobble.setDuration(DEFAULT_DURATION);
-	        		
+
 	        		trackList.add(scrobble);
         		}
         	}
         }
-        
+
         return trackList;
     }
 

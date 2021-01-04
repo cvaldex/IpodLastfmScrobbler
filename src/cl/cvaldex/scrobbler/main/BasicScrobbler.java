@@ -22,11 +22,11 @@ public class BasicScrobbler {
 
 	public static void scrobble(Collection<ScrobbleData> tracks , String userName , String userPassword , long delay , int scrobblingLogAmount , int voidScrobbles) throws IOException, InterruptedException{
 		Session session = Authenticator.getMobileSession(userName, userPassword, API_KEY, SECRET);
-		
+
 		long playCount = 1;
 		int totalScrobblings = 0;
 		long startTime = 0;
-		
+
 		long initTime = System.currentTimeMillis();
 		long averageTimeScrobbling = 0;
 
@@ -35,9 +35,11 @@ public class BasicScrobbler {
 		ScrobbleResult result = null;
 		//int floorCounter = 329;
 		int numberOfTracks = tracks.size();
-		long timeStamp = System.currentTimeMillis() / 1000;
-		
-		
+		long timeStamp = 1609434000;//System.currentTimeMillis() / 1000;
+
+		System.out.println("Timestamp: " + 1609434000);
+
+
 		for (ScrobbleData data : tracks) {
 			playCount = data.getPlayCount();
 			//playCount = 1; /**TO-DO Corregir esta aberración **/
@@ -45,27 +47,27 @@ public class BasicScrobbler {
 			/**TO-DO corregir esto del playcount **/
 			while(playCount > 0){
 				if(voidScrobbles < totalScrobblings || voidScrobbles == 0){
-					startTime = timeStamp - (numberOfTracks * 10);
+					//startTime = timeStamp - (numberOfTracks * 10);
 					numberOfTracks --;
-					data.setTimestamp((int)startTime);
+					//data.setTimestamp((int)startTime);
 					result = Track.scrobble(data , session);
 				}
-				
+
 				if(!result.isSuccessful()){
 					System.out.println("Error: " + result.getErrorMessage() + " " + "\n" + data.toString());
 				}
-				
+
 				playCount--;
 				totalScrobblings++;
-				
+
 				if((totalScrobblings % scrobblingLogAmount) == 0){
 					System.out.println("Scrobbling enviados: " + totalScrobblings);
 				}
-				
+
 				//System.out.println("Init: " + System.currentTimeMillis());
 				Thread.sleep(delay); //esperar un tiempo antes de enviar el siguiente scrobbling
 				//System.out.println("Out: " + System.currentTimeMillis());
-			}			
+			}
 		}
 
 		averageTimeScrobbling = (System.currentTimeMillis() - initTime) / totalScrobblings;
