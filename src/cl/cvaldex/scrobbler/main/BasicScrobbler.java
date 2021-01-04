@@ -35,11 +35,7 @@ public class BasicScrobbler {
 		ScrobbleResult result = null;
 		//int floorCounter = 329;
 		int numberOfTracks = tracks.size();
-		long timeStamp = 1609434000;//System.currentTimeMillis() / 1000;
-
-		System.out.println("Timestamp: " + 1609434000);
-
-
+		
 		for (ScrobbleData data : tracks) {
 			playCount = data.getPlayCount();
 			//playCount = 1; /**TO-DO Corregir esta aberración **/
@@ -47,9 +43,7 @@ public class BasicScrobbler {
 			/**TO-DO corregir esto del playcount **/
 			while(playCount > 0){
 				if(voidScrobbles < totalScrobblings || voidScrobbles == 0){
-					//startTime = timeStamp - (numberOfTracks * 10);
 					numberOfTracks --;
-					//data.setTimestamp((int)startTime);
 					result = Track.scrobble(data , session);
 				}
 
